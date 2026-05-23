@@ -1,0 +1,359 @@
+{
+  "info": {
+    "_postman_id": "a2e5d93b-1793-4e89-bdc9-df7f62e84d43",
+    "name": "AI Seminar System API",
+    "description": "Production-quality API collection for the AI Assistant based Seminar System. Built with FastAPI, ChromaDB for RAG, and Multi-Agent Orchestration (Maker-Checker-Reviewer) for live doubt resolution.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Seminar Control",
+      "description": "Endpoints to manage the active seminar state, progress slide flows, and trigger agentic resolution of student doubts.",
+      "item": [
+        {
+          "name": "Start Seminar Session",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"AI: Where to Begin - A Practical Roadmap\",\n  \"slides\": [\n    {\n      \"slide_id\": 0,\n      \"title\": \"Introduction to the AI Landscape\",\n      \"content\": \"Overview of AI, Machine Learning, Deep Learning, and Generative AI. We will establish the core roadmap for modern engineering students.\",\n      \"notes\": \"Welcome everyone. I'm Rahul, principal tech lead. Today we are laying down a solid roadmap. AI is not just magic; it's math and engineering. We'll outline ML, DL, and GenAI. No doubts will be collected for this slide, as it's an intro.\",\n      \"wait_for_doubts\": false\n    },\n    {\n      \"slide_id\": 1,\n      \"title\": \"The RAG Architecture & Vector DBs\",\n      \"content\": \"Retrieval-Augmented Generation (RAG) overcomes LLM static-knowledge limits by querying an external vector database (e.g. ChromaDB) using semantic distance.\",\n      \"notes\": \"Now let's talk about RAG. LLMs have a cutoff, but RAG bridges this by retrieving content. Think of vector databases like high-dimensional library indexes where we find similar concepts. We wait for doubts here to address vector search, chunking size, or embeddings.\",\n      \"wait_for_doubts\": true\n    },\n    {\n      \"slide_id\": 2,\n      \"title\": \"Multi-Agent Orchestration with CrewAI\",\n      \"content\": \"Instead of simple sequential logic, we use Maker-Checker-Reviewer agent patterns to draft, verify, and polish answers for student doubts.\",\n      \"notes\": \"To avoid halluncinations during live seminars, we employ multi-agent verification. The Maker agent drafts the response using RAG, the Checker checks it against slide content for accuracy, and the Reviewer refines the tone for students. We wait for doubts here.\",\n      \"wait_for_doubts\": true\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/seminar/start",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "seminar",
+                "start"
+              ]
+            },
+            "description": "Starts a brand-new seminar session, clear any existing session state, and initialize the slide repository and vector storage database for semantic similarity check."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Seminar Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/seminar/status",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "seminar",
+                "status"
+              ]
+            },
+            "description": "Returns information about the current active seminar session, including active slide ID, titles, notes, speech history, and status flags."
+          },
+          "response": []
+        },
+        {
+          "name": "Advance Slide",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/seminar/next",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "seminar",
+                "next"
+              ]
+            },
+            "description": "Advances the seminar session to the next slide in sequence. If the active slide has wait_for_doubts enabled, advancing will automatically trigger the RAG retrieval, ranking, agentic doubt drafting/answering cycle before completing the advance."
+          },
+          "response": []
+        },
+        {
+          "name": "Force Resolve Doubts",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/seminar/resolve-doubts",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "seminar",
+                "resolve-doubts"
+              ]
+            },
+            "description": "Manually force the multi-agent system to resolve and answer any pending doubts submitted for the current slide without advancing the slide yet."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Slides Info",
+      "description": "Endpoints to retrieve slide presentation content, notes, and specific slide detail schemas.",
+      "item": [
+        {
+          "name": "Get All Slides",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/slides/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "slides",
+                ""
+              ]
+            },
+            "description": "Retrieve list of all slides stored in the current presentation deck."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Slide By ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/slides/:slide_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "slides",
+                ":slide_id"
+              ],
+              "variable": [
+                {
+                  "key": "slide_id",
+                  "value": "1",
+                  "description": "The numeric ID of the slide to retrieve"
+                }
+              ]
+            },
+            "description": "Retrieve detailed properties of a specific slide using its unique numeric ID."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Student Doubts",
+      "description": "Endpoints to submit student questions/doubts, fetch doubts for a slide, view answered doubts, and run RAG ranking.",
+      "item": [
+        {
+          "name": "Submit Student Doubt",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"slide_id\": 1,\n  \"question\": \"Does the size of chunking affect the semantic similarity accuracy in ChromaDB?\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/doubts/submit",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "doubts",
+                "submit"
+              ]
+            },
+            "description": "Allows a student or client to submit a new doubt/question. The doubt's slide_id must match the current active slide_id of the running seminar, and that slide must have wait_for_doubts enabled."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Doubts for Slide",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/doubts/slide/:slide_id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "doubts",
+                "slide",
+                ":slide_id"
+              ],
+              "variable": [
+                {
+                  "key": "slide_id",
+                  "value": "1",
+                  "description": "The slide ID to retrieve doubts for"
+                }
+              ]
+            },
+            "description": "Retrieve all doubts (including pending, drafted, or approved status) submitted specifically for the given slide ID."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Resolved Doubts for Slide",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/doubts/slide/:slide_id/resolved",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "doubts",
+                "slide",
+                ":slide_id",
+                "resolved"
+              ],
+              "variable": [
+                {
+                  "key": "slide_id",
+                  "value": "1",
+                  "description": "The slide ID to retrieve resolved doubts for"
+                }
+              ]
+            },
+            "description": "Retrieve only the approved/resolved doubts (with computed AI answers) for the given slide ID."
+          },
+          "response": []
+        },
+        {
+          "name": "Rank & Categorize Doubts (RAG)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/doubts/slide/:slide_id/rank?top_n=3&global_pool=true",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "doubts",
+                "slide",
+                ":slide_id",
+                "rank"
+              ],
+              "query": [
+                {
+                  "key": "top_n",
+                  "value": "3",
+                  "description": "Number of top relevant questions to return"
+                },
+                {
+                  "key": "global_pool",
+                  "value": "true",
+                  "description": "If true, search and rank doubts from the global database pool. If false, search only within doubts submitted for this specific slide."
+                }
+              ],
+              "variable": [
+                {
+                  "key": "slide_id",
+                  "value": "1",
+                  "description": "The slide ID whose content/notes will be used for similarity comparison"
+                }
+              ]
+            },
+            "description": "Get top N doubts ranked by semantic relevance to the slide contents/notes. Returns doubt details along with similarity score, category categorization (top_n, not_relevant_to_ppt, diff_slide, low_priority), and actions message (e.g. 'answered via RAG', 'will be covered in next slide', etc.)"
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "type": "string"
+    }
+  ]
+}
